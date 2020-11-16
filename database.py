@@ -8,8 +8,8 @@ class DatabaseManager:
     def __del__(self):
         self.connection.close()
 
-    def _execute(self, statement):
+    def _execute(self, statement, values=None):
         with self.connection:
             cursor = self.connection.cursor()
-            cursor.execute(statement)
+            cursor.execute(statement, values or [])
             return cursor
