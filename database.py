@@ -7,3 +7,9 @@ class DatabaseManager:
 
     def __del__(self):
         self.connection.close()
+
+    def _execute(self, statement):
+        with self.connection:
+            cursor = self.connection.cursor()
+            cursor.execute(statement)
+            return cursor
