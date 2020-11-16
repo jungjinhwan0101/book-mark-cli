@@ -9,3 +9,4 @@ columns = {
     'notes': 'TEXT'
 }
 db.create_table('test', columns)
+db.add('test', {'title': 'test_title', 'url': 'www.test.com'})
