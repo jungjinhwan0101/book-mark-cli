@@ -61,7 +61,7 @@ class DatabaseManager:
             query += f' WHERE {select_criteria}'
 
         if order_by:
-            query += f'ORDER BY = {order_by}'
+            query += f' ORDER BY {order_by}'
 
         return self._execute(
             query,
