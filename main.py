@@ -59,12 +59,20 @@ def clear_screen():
     os.system(clear)
 
 
+def get_github_import_options():
+    return {
+        'github_username': get_user_input('Github username'),
+        'preserve_timestamps': get_user_input('Preserve timestamps [Y/n]', required=False) in {'Y', 'y', None},
+    }
+
+
 def loop():
     options = {
         'A': Option('Add a book', commands.AddBookmarkCommand(), prep_call=get_new_bookmark_data),
         'B': Option('List bookmarks by date', commands.ListBookmarksCommand()),
         'T': Option('List bookmarks by title', commands.ListBookmarksCommand(order_by='title')),
         'D': Option('Delete a bookmark', commands.DeleteBookmarkCommand(), prep_call=get_bookmark_id_for_deletion),
+        'G': Option('Import Github stars', commands.ImportGithubStarsCommand(), prep_call=get_github_import_options),
         'Q': Option('Quit', commands.QuitCommand())
     }
     print_options(options)
