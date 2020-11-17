@@ -50,3 +50,20 @@ class DatabaseManager:
             ''',
             tuple(criteria.values())
         )
+
+    def select(self, table_name, criteria=None, order_by=None):
+        criteria = criteria or {}
+        query = f'SELECT * FROM {table_name}'
+
+        if criteria:
+            placeholders = [f'{column} = ?' for column in criteria.keys()]
+            select_criteria = ' AND '.join(placeholders)
+            query += f' WHERE {select_criteria}'
+
+        if order_by:
+            query += f'ORDER BY = {order_by}'
+
+        return self._execute(
+            query,
+            tuple(criteria.values())
+        )
