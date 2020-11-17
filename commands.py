@@ -20,8 +20,8 @@ class CreateBookmarksTableCommand:
 
 
 class AddBookmarkCommand:
-    def execute(self, data):
-        data['date_added'] = datetime.utcnow().isoformat()
+    def execute(self, data, timestamp=None):
+        data['date_added'] = timestamp or datetime.utcnow().isoformat()
         db.add('bookmarks', data)
         return 'Bookmark added!'
 
