@@ -30,6 +30,8 @@ class Option:
         
         if success:
             print(self.success_message.format(result=formatted_result))
+        else:
+            print('command failed.')
         
     def __str__(self):
         return self.name
@@ -100,7 +102,5 @@ def loop():
 
 
 if __name__ == '__main__':
-    commands.CreateBookmarksTableCommand().execute()
-
     while True:
         loop()
