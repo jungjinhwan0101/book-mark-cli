@@ -1,16 +1,20 @@
 import sys
 from datetime import datetime
-
+from abc import ABC, abstractmethod
 import requests
-
 from database import DatabaseManager
 
 
 db = DatabaseManager('bookmarks.db')
 
 
-class CreateBookmarksTableCommand:
-    def execute(self):
+class Command(ABC):
+    @abstractmethod
+    def execute(self, data):
+        pass
+
+class CreateBookmarksTableCommand(Command):
+    def execute(self, data=None):
         db.create_table(
             'bookmarks', {
                 'id': 'INTEGER PRIMARY KEY AUTOINCREMENT',
@@ -22,14 +26,14 @@ class CreateBookmarksTableCommand:
         )
 
 
-class AddBookmarkCommand:
+class AddBookmarkCommand(Command):
     def execute(self, data, timestamp=None):
         data['date_added'] = timestamp or datetime.utcnow().isoformat()
         db.add('bookmarks', data)
         return 'Bookmark added!'
 
 
-class ImportGithubStarsCommand:
+class ImportGithubStarsCommand(Command):
     def _extract_bookmark_info(self, repo):
         return {
             'title': repo['name'],
@@ -64,20 +68,20 @@ class ImportGithubStarsCommand:
         return f'Imported {bookmarks_imported} bookmarks from starred repos!'
 
 
-class ListBookmarksCommand:
+class ListBookmarksCommand(Command):
     def __init__(self, order_by='date_added'):
         self.order_by = order_by
 
-    def execute(self):
+    def execute(self, data):
         return db.select('bookmarks', order_by=self.order_by).fetchall()
 
 
-class DeleteBookmarkCommand:
+class DeleteBookmarkCommand(Command):
     def execute(self, data):
         db.delete('bookmarks', {'id': data})
         return 'Bookmark deleted!'
 
 
-class QuitCommand:
-    def execute(self):
+class QuitCommand(Command):
+    def execute(self, data=None):
         sys.exit()
