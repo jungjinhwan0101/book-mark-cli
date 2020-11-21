@@ -31,7 +31,7 @@ class Option:
         if success:
             print(self.success_message.format(result=formatted_result))
         else:
-            print('command failed.')
+            print('[!] Command failed!\n')
         
     def __str__(self):
         return self.name
@@ -86,11 +86,21 @@ def get_github_import_options():
     }
 
 
+def get_new_bookmark_info():
+    bookmark_id = get_user_input('Enter a book ID to edit')
+    field = get_user_input('Choose a value to edit (title, URL, notes)')
+    new_value = get_user_input(f'Enter the new value for {field}')
+    return {
+        'id': bookmark_id,
+        'update': {field: new_value},
+    }
+
 def loop():
     options = {
         'A': Option('Add a book', commands.AddBookmarkCommand(), prep_call=get_new_bookmark_data, success_message='Bookmark added!'),
         'B': Option('List bookmarks by date', commands.ListBookmarksCommand()),
         'T': Option('List bookmarks by title', commands.ListBookmarksCommand(order_by='title')),
+        'E': Option('Edit a bookmark', commands.EditBookmarkCommand(), prep_call=get_new_bookmark_info, success_message='Bookmark updated!'),
         'D': Option('Delete a bookmark', commands.DeleteBookmarkCommand(), prep_call=get_bookmark_id_for_deletion, success_message='Bookmark deleted!'),
         'G': Option('Import Github stars', commands.ImportGithubStarsCommand(), prep_call=get_github_import_options, success_message='Imported {result} bookmarks from starred repos!'),
         'Q': Option('Quit', commands.QuitCommand())

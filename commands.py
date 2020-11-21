@@ -67,6 +67,14 @@ class ListBookmarksCommand(Command):
         return True, persistence.list(order_by=self.order_by)
 
 
+class EditBookmarkCommand(Command):
+    def execute(self, data):
+        try:
+            persistence.update(data['id'], data['update'])
+        except:
+            return False, None
+        return True, None
+
 class DeleteBookmarkCommand(Command):
     def execute(self, data):
         persistence.delete(data)

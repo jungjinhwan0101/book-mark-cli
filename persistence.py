@@ -38,3 +38,6 @@ class BookmarkDatabase(PersistenceLayer):
     
     def delete(self, bookmark_id):
         self.db.delete(self.table_name, {'id': bookmark_id})
+
+    def update(self, bookmark_id, bookmark_data):
+        self.db.update(self.table_name, {'id': bookmark_id}, bookmark_data)
