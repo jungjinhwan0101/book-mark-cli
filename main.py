@@ -2,17 +2,35 @@ import os
 import commands
 
 
+def format_bookmakr(bookmark):
+    fields = []
+    for field in bookmark:
+        _field = str(field) if field else ''
+        fields.append(_field)
+    return '\t'.join(fields)
+
 class Option:
-    def __init__(self, name, command, prep_call=None):
+    def __init__(self, name, command, prep_call=None, success_message='{result}'):
         self.name = name
         self.command = command
         self.prep_call = prep_call
+        self.success_message = success_message
 
     def choose(self):
         data = self.prep_call() if self.prep_call else None
-        message = self.command.execute(data)
-        print(message)
+        success, result = self.command.execute(data)
+        
+        formatted_result = ''
 
+        if isinstance(result, list):
+            for bookmark in result:
+                formatted_result += '\n' + format_bookmakr(bookmark)
+        else:
+            formatted_result = result
+        
+        if success:
+            print(self.success_message.format(result=formatted_result))
+        
     def __str__(self):
         return self.name
 
@@ -68,11 +86,11 @@ def get_github_import_options():
 
 def loop():
     options = {
-        'A': Option('Add a book', commands.AddBookmarkCommand(), prep_call=get_new_bookmark_data),
+        'A': Option('Add a book', commands.AddBookmarkCommand(), prep_call=get_new_bookmark_data, success_message='Bookmark added!'),
         'B': Option('List bookmarks by date', commands.ListBookmarksCommand()),
         'T': Option('List bookmarks by title', commands.ListBookmarksCommand(order_by='title')),
-        'D': Option('Delete a bookmark', commands.DeleteBookmarkCommand(), prep_call=get_bookmark_id_for_deletion),
-        'G': Option('Import Github stars', commands.ImportGithubStarsCommand(), prep_call=get_github_import_options),
+        'D': Option('Delete a bookmark', commands.DeleteBookmarkCommand(), prep_call=get_bookmark_id_for_deletion, success_message='Bookmark deleted!'),
+        'G': Option('Import Github stars', commands.ImportGithubStarsCommand(), prep_call=get_github_import_options, success_message='Imported {result} bookmarks from starred repos!'),
         'Q': Option('Quit', commands.QuitCommand())
     }
     print_options(options)
